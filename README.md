@@ -19,7 +19,9 @@ Why?
 
 All the airflow helm charts I've found have been for some flavour of Celery/Redis Workers deployment pattern
 which incurs a higher operational cost having run it myself for a while. This chart specifically focuses on the KubernetesOperator Deployment with workers either being a default worker image or using other custom docker containers as the 
-Kubernetes deployment facilitates. This makes things a lot easier to scale and a lot easier to manage dependencies by using different containers rather than managing queues.
+Kubernetes deployment facilitates. This makes things a lot easier to scale and a lot easier to manage dependencies by using different containers rather than managing queues. 
+
+Other realisation I've come to over time is it's a lot easier and safer to have a complete atomic deployment that can be incremented to roll back over sharing state (aka code + dags) between workers and schedulers etc. 
 
 
 
