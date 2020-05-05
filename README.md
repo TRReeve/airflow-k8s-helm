@@ -3,7 +3,7 @@ airflow-kubernetes
 A Helm chart for Kubernetes to bootstrap an airflow cluster using the kubernetes
 operator that simplifies remote logging, ingresses and database deployment.Base docker image for this 
 can be found [here](https://hub.docker.com/repository/docker/reevedata/airflow-kubernetes)
-
+this has been intentionally kept minimal and as much configuration as possible has been offloaded to the chart. 
 Current chart version is `0.1.0`
 
 Why?
@@ -12,7 +12,7 @@ Why?
 All the airflow helm charts I've found have been for the Celery/Redis Workers deployment pattern
 which incurs a higher operational cost. This chart specifically focuses on the KubernetesOperator Deployment
 with workers either being a default worker image or using other custom docker containers as the 
-Kubernetes deployment facilitates.   
+Kubernetes deployment facilitates. 
 
 
 Installation
