@@ -1,7 +1,8 @@
 airflow-kubernetes
 ==================
 A Helm chart for Kubernetes to bootstrap an airflow cluster using the kubernetes
-operator that simplifies remote logging, ingresses and database deployment.
+operator that simplifies remote logging, ingresses and database deployment.Base docker image for this 
+can be found [here](https://hub.docker.com/repository/docker/reevedata/airflow-kubernetes)
 
 Current chart version is `0.1.0`
 
