@@ -1,14 +1,44 @@
 airflow-kubernetes
 ==================
-A Helm chart for Kubernetes
+A Helm chart for Kubernetes to bootstrap an airflow cluster using the kubernetes
+operator that simplifies remote logging, ingresses and database deployment.
 
 Current chart version is `0.1.0`
 
+Installation
+===========
+
+helm repo add airflow-k8s-git-test https://trreeve.github.io/airflow-kubernetes
+kubectl create namespace airflow-test
+helm install airflow -n airflow-test airflow-kubernetes
 
 
+Implements
+==========
+- Remote Logging
+- Ingress
+- Created Database if enabled
+- Created Secrets if enabled
+
+Not Implemented
+==============
+- RBAC
+
+Lifecycle
+========= 
+- On upgrade restarts scheduler and webserver. Does not attempt to Restart Database
+Running jobs will continue to run in pods and be picked up by scheduler on reboot.  
+
+Deployment Options
+==================
+- Build your own docker containers with your code in them and replace the images 
+in under images with those. The containers will need "entrypoint.sh" (docker/airflow/script/entrypoint.sh) available 
+at the top level of the file system in order to start. 
+
+- Extend the template to mount shared nfs to containers (trickier)
 
 
-## Chart Values
+Chart Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
