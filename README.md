@@ -1,4 +1,4 @@
-airflow-kubernetes
+Airflow-k8s-helm 
 ==================
 A Helm chart for Kubernetes to bootstrap an airflow cluster using the kubernetes
 operator that simplifies remote logging, ingresses and database deployment.Base docker image for this 
