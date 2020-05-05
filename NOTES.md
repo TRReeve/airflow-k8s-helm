@@ -15,7 +15,8 @@ Running jobs will continue to run in pods and be picked up by scheduler on reboo
 
 Deployment Options
 - Build your own docker containers with your code in them and replace the images 
-in values.yaml with those.
+in under images with those. The containers will need "entrypoint.sh" (docker/airflow/script/entrypoint.sh) available 
+at the top level of the file system in order to start. 
 
 - Extend the template to mount shared nfs to containers (trickier)
 
