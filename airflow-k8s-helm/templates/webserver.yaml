@@ -1,0 +1,82 @@
+{{ if .Values.airflow.webserver.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-webserver
+  labels:
+    app: "airflow-cluster"
+    component: webserver
+spec:
+  replicas: {{ .Values.airflow.webserver.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: "airflow-cluster"
+      component: webserver
+  template:
+    metadata:
+      labels:
+        app: "airflow-cluster"
+        component: webserver
+      annotations:
+        # Forces a redeploy on any upgrade.
+        force_redeploy: {{ randAscii 10 | quote }}
+    spec:
+      serviceAccountName: "airflow"
+      containers:
+        - name: webserver
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          image: {{ .Values.images.core.repository }}:{{ .Values.images.core.tag}}
+          ports:
+            - containerPort: 8080
+              name: webserveruiport
+          command:
+            - sh
+            - /entrypoint.sh
+            - webserver
+          envFrom:
+            - configMapRef:
+                name: "airflow-config"
+            - configMapRef:
+                name: "worker-config"
+            - configMapRef:
+                name: "logging-config"
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file | default "airflow-secrets-default"}}
+                  key: DB_PASSWORD
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: DB_HOST
+            {{- if .Values.airflow.remote_logging.enable}}
+            - name: REMOTE_LOGGING_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: REMOTE_LOGGING_STRING
+            {{- end }}
+            {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
+            - name: {{ $secret_name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: {{ $secret_name }}
+          {{-  end }}
+          resources:
+            requests:
+              cpu: {{ .Values.airflow.webserver.resources.requests.cpu}}
+              memory: {{ .Values.airflow.webserver.resources.requests.memory}}
+{{ end }}

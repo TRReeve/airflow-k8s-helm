@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-config
+  namespace: {{ .Release.Namespace}}
+data:
+  AIRFLOW__CORE__EXECUTOR: KubernetesExecutor
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: {{ .Values.images.worker.repository}}
+  AIRFLOW__WEBSERVER__LOG_FETCH_TIMEOUT_SEC: {{ 10 | quote}}
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: {{ .Values.images.worker.tag}}
+  AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH: {{ .Values.airflow.worker.pods_per_heartbeat | quote}}
+  AIRFLOW__KUBERNETES__NAMESPACE: {{ .Release.Namespace }}
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN: "{{.Values.airflow.db.protocol}}://{{ .Values.airflow.db.username }}:$DB_PASSWORD@$DB_HOST:{{ .Values.airflow.db.port }}/{{.Values.airflow.db.dbname}}"
+  AIRFLOW__KUBERNETES__DAGS_IN_IMAGE: "True"
+  AIRFLOW__KUBERNETES__IN_CLUSTER: "True"
+  AIRFLOW__KUBERNETES__KUBE_CLIENT_REQUEST_ARGS: '{"_request_timeout" : [60,60] }'
+  {{/*  IF EXAMPLE DAGS ENABLED */}}
+  {{- if .Values.airflow.example_dags.enable}}
+  AIRFLOW__CORE__LOAD_EXAMPLES: "True"
+  {{ else }}
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  {{- end }}
+  {{/* IF RBAC ENABLED*/}}
+  {{-  if .Values.airflow.rbac.enable }}
+  AIRFLOW__CORE__RBAC: "True"
+  {{- else }}
+  AIRFLOW__CORE__RBAC: "False"
+  {{- end }}
+  {{/*  IF INGRESS ENABLED*/}}
+  {{-  if .Values.airflow.webserver.ingress.enable }}
+  AIRFLOW__WEBSERVER__BASE_URL: {{.Values.airflow.webserver.ingress.host}}
+  {{- end }}
+{{/*CUSTOM VARIABLES*/}}
+{{- range .Values.airflow.worker.extraVariables }}
+  {{ .name }}: {{ .value | quote}}
+{{- end}}
