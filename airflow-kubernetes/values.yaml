@@ -1,0 +1,110 @@
+# Default values for airflow-kubernetes.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+images:
+  core:
+    # The core airflow image for the webserver and scheduler components
+    # If you want to customise or build your own image
+    repository: reevedata/airflow-kubernetes
+    pullPolicy: IfNotPresent
+    tag: v1.0.1
+  # The docker repository location for your worker container.
+  worker:
+    repository: reevedata/airflow-kubernetes
+    pullPolicy: IfNotPresent
+    tag: v1.0.1
+
+airflow:
+  example_dags:
+    enable: true
+  # Normally will be preferable to set this up for any production process
+  remote_logging:
+    enable: false
+    # The name of a connection set up on your
+    # Container for logging
+    conn_name: "logging"
+    # Remote Path for your logging e.g s3://mylogs/airflow/logs)
+    logs_folder: ""
+    # If you are not providing your own secrets file with REMOTE_LOGGING_STRING included
+    # then you can give the connection String that will be used for your logging connection.
+    # This will be made into a secret.
+    logging_connection_string: ""
+
+  # NOT FUNCTIONAL YET
+  rbac:
+    enable: false
+  webserver:
+    enable: true
+    replicas: 1
+    ingress:
+      enable: true
+      host: airflow.example.com
+      annotations:
+    resources:
+      requests:
+        cpu: "0.1"
+        memory: "100Mi"
+  scheduler:
+    requests:
+     cpu: "0.5"
+     memory: "500Mi"
+
+  secrets:
+  # Provide your own secret manifest here. This secret file should contain
+  # DB_PASSWORD and DB_HOST (and if using remote logging then REMOTE_LOGGING_STRING)
+  # All Base 64 encoded.
+  #  apiVersion: v1
+  #  kind: Secret
+  #  metadata:
+  #    name: my-secrets
+  #    namespace: my-namespace
+  #  type: Opaque
+  #  data:
+  #    DB_PASSWORD: XXXX
+  #    DB_HOST: XXXX
+  #    REMOTE_LOGGING_STRING: XXXX (If remote logging enabled)
+  #
+  # If set to true then a secret file will be created using the credentials provided
+  # under airflow.db and airflow.secrets.extra secrets. Creating a secret file
+  # Like This is not ideal for production use.
+    create_secrets_file: true
+
+  # The name of a secret object in the same namespace. This will contain
+  # DB_PASSWORD, DB_HOST, REMOTE_LOGGING_STRING
+  #    secret_file: my-secrets
+#    secret_file:
+
+    # Any Further Secrets that need to be available in the environment can be added here.
+  # IF PROVIDING FILE:
+  # Secret only needs to a list form e.g
+  #    extra_secrets:
+  #      - Secret1
+  #      - Secret2
+  # IF SECRETS TO BE CREATED BY THIS HELM CHART (not recommended for production):
+  # Secrets to be provided as a map e.g
+  #      extra_secrets:
+  #        Secret1: "admin"
+  #        Secret2: "otherpass"
+    extra_secrets: []
+
+  worker:
+    # Maximum amount of pods that can be created per scheduler heartbeat.
+    pods_per_heartbeat: 5
+    # Additional Environment variables that will be created on workers when they
+    # Initialise
+    worker_env_variables: []
+
+  #Extra Variables that will be created in your webserver and scheduler containers.
+  extra_variables:
+
+  db:
+    # If Set to True creates a postgres database to act as
+    # a backend for your airflow cluster.
+    create_db: true
+    protocol: postgresql+psycopg2
+    username: admin
+    host: airflow-default-db-svc
+    password: admin
+    dbname: airflow
+    port: 5432
+

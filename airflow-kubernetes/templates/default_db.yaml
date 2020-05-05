@@ -1,0 +1,96 @@
+{{ if .Values.airflow.db.create_db }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{.Release.Name}}db"
+  namespace: {{ .Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: "airflow-cluster"
+      component: "database"
+  serviceName: airflow-db
+  template:
+    metadata:
+      name: "{{.Release.Name}}db"
+      namespace: {{ .Release.Namespace}}
+      labels:
+        app: "airflow-cluster"
+        component: "database"
+    spec:
+      volumes:
+        - name: airflow-db-volume-{{ .Release.Namespace | lower}}
+          persistentVolumeClaim:
+            claimName: airflow-db-pv-claim-{{ .Release.Namespace | lower}}
+      containers:
+        - name: airflow-backend
+          image: library/postgres:10.4
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /mnt/mounted_data
+              name: "airflow-db-volume-{{ .Release.Namespace | lower}}"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGDATA
+              value: /mnt/mounted_data:/var/lib/postgresql/data
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+            - name: POSTGRES_USER
+              value: {{ .Values.airflow.db.username}}
+            - name: POSTGRES_DB
+              value: {{ .Values.airflow.db.dbname }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ .Release.Name }}-db-volume-{{ .Release.Namespace | lower}}"
+  namespace: {{.Release.Namespace}}
+spec:
+  capacity:
+    storage: 10Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/pg_data
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: airflow-db-pv-claim-{{ .Release.Namespace | lower}}
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: airflow
+    component: db-pvc
+spec:
+  storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name}}-default-db-svc"
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    app: "airflow-cluster"
+    component: "database"
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  type: NodePort
+{{ end }}
+
+
+
