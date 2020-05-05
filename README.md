@@ -6,6 +6,14 @@ can be found [here](https://hub.docker.com/repository/docker/reevedata/airflow-k
 this has been intentionally kept minimal and as much configuration as possible has been offloaded to the chart. 
 Current chart version is `0.1.0`
 
+Installation
+===========
+
+    helm repo add airflow-k8s https://trreeve.github.io/airflow-k8s-helm/
+    kubectl create namespace airflow-test
+    helm install airflow -n airflow-test airflow-k8s/airflow-k8s-helm
+
+
 Why?
 ===
 
@@ -14,13 +22,6 @@ which incurs a higher operational cost. This chart specifically focuses on the K
 with workers either being a default worker image or using other custom docker containers as the 
 Kubernetes deployment facilitates. 
 
-
-Installation
-===========
-
-    helm repo add airflow-k8s https://trreeve.github.io/airflow-k8s-helm/
-    kubectl create namespace airflow-test
-    helm install airflow -n airflow-test airflow-k8s/airflow-k8s-helm
 
 
 Implements
