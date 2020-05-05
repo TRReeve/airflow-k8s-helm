@@ -6,6 +6,15 @@ can be found [here](https://hub.docker.com/repository/docker/reevedata/airflow-k
 
 Current chart version is `0.1.0`
 
+Why?
+===
+
+All the airflow helm charts I've found have been for the Celery/Redis Workers deployment pattern
+which incurs a higher operational cost. This chart specifically focuses on the KubernetesOperator Deployment
+with workers either being a default worker image or using other custom docker containers as the 
+Kubernetes deployment facilitates.   
+
+
 Installation
 ===========
 
