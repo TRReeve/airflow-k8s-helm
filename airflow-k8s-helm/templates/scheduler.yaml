@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace}}
+  name: {{  .Release.Name }}-scheduler
+  labels:
+    app: "airflow-cluster"
+    component: scheduler
+spec:
+  selector:
+    matchLabels:
+      app: "airflow-cluster"
+      component: scheduler
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: "airflow-cluster"
+        component: scheduler
+      annotations:
+        # Forces a redeploy on any upgrade.
+        force_redeploy: {{ randAscii 10 | quote }}
+    spec:
+      serviceAccountName: "airflow"
+      containers:
+        - name: scheduler
+          image: {{ .Values.images.core.repository}}:{{ .Values.images.core.tag}}
+          command:
+            - sh
+            - /entrypoint.sh
+            - scheduler
+          envFrom:
+            - configMapRef:
+                name: "airflow-config"
+            - configMapRef:
+                name: "worker-config"
+            - configMapRef:
+                name: "logging-config"
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: DB_PASSWORD
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: DB_HOST
+          {{- if .Values.airflow.remote_logging.enable}}
+            - name: REMOTE_LOGGING_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  key: REMOTE_LOGGING_STRING
+          {{- end }}
+          {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
+            - name: {{ $secret_name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.airflow.secrets.secret_file | default "airflow-secrets-default"}}
+                  key: {{ $secret_name }}
+          {{-  end }}
+          resources:
+            requests:
+              cpu: {{ .Values.airflow.scheduler.requests.cpu}}
+              memory: {{ .Values.airflow.scheduler.requests.memory}}
+
