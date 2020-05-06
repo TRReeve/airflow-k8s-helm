@@ -39,7 +39,7 @@ Not Implemented (Yet)
 Lifecycle
 ========= 
 - On upgrade restarts scheduler and webserver. Does not attempt to Restart Database
-Running jobs will continue to run in pods and be picked up by scheduler on reboot.  
+Running jobs will continue to run in pods and be picked up by scheduler on reboot. If you are not creating a database then db access is provided through an external service.
 
 Deployment Options
 ==================
