@@ -38,8 +38,11 @@ airflow:
     replicas: 1
     ingress:
       enable: true
-      host: airflow.example.com
+      host: airflow.example.data.global.com
       annotations:
+        alb.ingress.kubernetes.io/target-type: instance
+        kubernetes.io/ingress.class: alb
+
     resources:
       requests:
         cpu: "0.1"

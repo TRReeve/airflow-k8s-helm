@@ -26,10 +26,6 @@ data:
   {{- else }}
   AIRFLOW__CORE__RBAC: "False"
   {{- end }}
-  {{/*  IF INGRESS ENABLED*/}}
-  {{-  if .Values.airflow.webserver.ingress.enable }}
-  AIRFLOW__WEBSERVER__BASE_URL: {{.Values.airflow.webserver.ingress.host}}
-  {{- end }}
 {{/*CUSTOM VARIABLES*/}}
 {{- range .Values.airflow.worker.extraVariables }}
   {{ .name }}: {{ .value | quote}}
