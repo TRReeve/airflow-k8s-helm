@@ -9,7 +9,7 @@ Current chart version is `0.1.0`
 Installation
 ===========
 
-    helm repo add airflow-k8s https://trreeve.github.io/airflow-kubernetes/airflow-k8s-helm
+    helm repo add airflow-k8s https://trreeve.github.io/airflow-k8s-helm/
     kubectl create namespace airflow-test
     helm install airflow -n airflow-test airflow-k8s/airflow-k8s-helm
 
