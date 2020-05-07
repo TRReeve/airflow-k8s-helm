@@ -28,10 +28,15 @@ spec:
       containers:
         - name: webserver
           readinessProbe:
+            initialDelaySeconds: 30
+            failureThreshold: 3
             httpGet:
               path: /health
               port: 8080
+
           livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
             httpGet:
               path: /health
               port: 8080
