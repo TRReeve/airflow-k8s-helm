@@ -38,7 +38,7 @@ airflow:
     replicas: 1
     ingress:
       enable: true
-      host: airflow.example.data.global.com
+      host: airflow.example.com
       annotations:
         alb.ingress.kubernetes.io/target-type: instance
         kubernetes.io/ingress.class: alb
