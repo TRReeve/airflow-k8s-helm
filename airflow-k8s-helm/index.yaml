@@ -3,12 +3,12 @@ entries:
   airflow-k8s-helm:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2020-05-08T00:21:25.956791+01:00"
+    created: "2020-05-08T00:49:37.411572+01:00"
     description: A Helm chart for Kubernetes
-    digest: cc5773c8bf3f782e21e9544d632d139623e55cb64b1d4ac95058b5ef73c26a9c
+    digest: b104450d503d2b13088660e9a2ab99b54e813f5b2a7f6e5bcb0b9d7e413ad5fa
     name: airflow-k8s-helm
     type: application
     urls:
     - airflow-k8s-helm-0.1.1.tgz
     version: 0.1.1
-generated: "2020-05-08T00:21:25.951667+01:00"
+generated: "2020-05-08T00:49:37.409468+01:00"

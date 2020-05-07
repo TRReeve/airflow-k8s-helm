@@ -7,6 +7,6 @@ data:
   {{- range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
   "AIRFLOW__KUBERNETES_KUBERNETES_SECRETS__{{ $secret_name | upper}}": {{$.Values.airflow.secrets.secret_file | default "airflow-secrets-default" }}="${{ $secret_name }}"
   {{- end}}
-  {{- range $var_name, $var_value := .Values.airflow.worker.workerEnvVariables}}
+  {{- range $var_name, $var_value := .Values.airflow.worker.worker_env_variables}}
   "AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__{{ $var_name | upper }}": {{ $var_value | quote}}
   {{- end}}

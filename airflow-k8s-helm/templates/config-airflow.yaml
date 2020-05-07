@@ -27,6 +27,6 @@ data:
   AIRFLOW__CORE__RBAC: "False"
   {{- end }}
 {{/*CUSTOM VARIABLES*/}}
-{{- range .Values.airflow.worker.extraVariables }}
+{{- range .Values.airflow.extra_variables }}
   {{ .name }}: {{ .value | quote}}
 {{- end}}
