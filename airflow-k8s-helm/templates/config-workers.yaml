@@ -4,9 +4,8 @@ metadata:
   name: worker-config
   namespace: {{ .Release.Namespace }}
 data:
-  {{- range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
-  "AIRFLOW__KUBERNETES_KUBERNETES_SECRETS__{{ $secret_name | upper}}": {{$.Values.airflow.secrets.secret_file | default "airflow-secrets-default" }}="${{ $secret_name }}"
-  {{- end}}
+  AIRFLOW__KUBERNETES__ENV_FROM_CONFIGMAP_REF: "airflow-config,logging-config"
+  AIRFLOW__KUBERNETES__ENV_FROM_SECRET_REF: {{$.Values.airflow.secrets.secret_file | default "airflow-secrets-default" }}
   {{- range $var_name, $var_value := .Values.airflow.worker.worker_env_variables}}
   "AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__{{ $var_name | upper }}": {{ $var_value | quote}}
   {{- end}}

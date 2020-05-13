@@ -5,11 +5,11 @@ metadata:
 data:
 {{- if .Values.airflow.remote_logging.enable }}
   AIRFLOW__CORE__REMOTE_LOGGING: "True"
-  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper }}: "$REMOTE_LOGGING_STRING"
+  "AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper }}": "$REMOTE_LOGGING_STRING"
   AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: {{ .Values.airflow.remote_logging.logs_folder | default "" | quote }}
   AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remote_logging.conn_name | default "" | quote}}
   AIRFLOW__CORE__ENCRYPT_S3_LOGS: "True"
-  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper }}: "$REMOTE_LOGGING_STRING"
+  "AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper }}": "$REMOTE_LOGGING_STRING"
   AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_LOGGING: "True"
   AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: {{ .Values.airflow.remote_logging.logs_folder | default "" | quote }}
   AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remote_logging.conn_name | default "" | quote}}
