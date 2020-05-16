@@ -37,6 +37,8 @@ spec:
                 name: "worker-config"
             - configMapRef:
                 name: "logging-config"
+            - secretRef:
+                name: "logging-secrets"
           env:
             - name: DB_PASSWORD
               valueFrom:
@@ -48,13 +50,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
                   key: DB_HOST
-          {{- if .Values.airflow.remote_logging.enable}}
-            - name: REMOTE_LOGGING_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
-                  key: REMOTE_LOGGING_STRING
-          {{- end }}
+            {{- if .Values.airflow.remote_logging.enable}}
+            - name: AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
+              value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
+            - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
+              value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
+            {{- end }}
           {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
             - name: {{ $secret_name }}
               valueFrom:
