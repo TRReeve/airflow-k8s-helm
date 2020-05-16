@@ -2,16 +2,19 @@
 
 export PYTHONPATH=$PYTHONPATH:$AIRFLOW_HOME
 
+
 case "$1" in
   webserver)
     echo "init database"
     airflow initdb
-    sleep 5
+    if [ $AIRFLOW__CORE__REMOTE_LOGGING = "True" ]; then
+      echo "Initialising connection $REMOTE_LOGGING_CONN_NAME"
+      python3 /create_connection.py
+    fi
+    sleep 10
     exec airflow "$@"
     ;;
   scheduler)
-    # To give the webserver time
-    # to run initdb.
     exec airflow "$@"
 esac
 

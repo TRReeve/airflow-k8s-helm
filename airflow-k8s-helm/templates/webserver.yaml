@@ -53,25 +53,27 @@ spec:
                 name: "airflow-config"
             - configMapRef:
                 name: "worker-config"
+            {{- if .Values.airflow.remote_logging.enable}}
             - configMapRef:
                 name: "logging-config"
             - secretRef:
-                name: "logging-secrets"
+                name: {{required "A remote logging secrets filename is required at .Values.airflow.remote_logging.remote_logs_secrets_filename" .Values.airflow.remote_logging.remote_logs_secrets_filename}}
+            {{- end }}
           env:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file | default "airflow-secrets-default"}}
+                  name: {{required "A secrets filename is required for a secret in the same namespace providing DB_PASSWORD and DB_HOST" .Values.airflow.secrets.secret_file}}
                   key: DB_PASSWORD
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  name: {{ .Values.airflow.secrets.secret_file }}
                   key: DB_HOST
             {{- if .Values.airflow.remote_logging.enable}}
-            - name: AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
+            - name: AIRFLOW_CONN_{{ required "A logging connection name is required" .Values.airflow.remote_logging.conn_name | upper}}
               value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
-            - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
+            - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ required "A logging connection name is required" .Values.airflow.remote_logging.conn_name | upper}}
               value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
             {{- end }}
             {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}

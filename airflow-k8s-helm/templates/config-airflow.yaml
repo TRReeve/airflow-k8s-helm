@@ -20,12 +20,6 @@ data:
   {{ else }}
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   {{- end }}
-  {{/* IF RBAC ENABLED*/}}
-  {{-  if .Values.airflow.rbac.enable }}
-  AIRFLOW__CORE__RBAC: "True"
-  {{- else }}
-  AIRFLOW__CORE__RBAC: "False"
-  {{- end }}
 {{/*CUSTOM VARIABLES*/}}
 {{- range $key, $value := .Values.airflow.extra_variables }}
   {{ $key }}: {{ $value | quote}}

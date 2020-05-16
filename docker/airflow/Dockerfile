@@ -54,8 +54,9 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
+    && pip install SQLAlchemy=="1.3.15" \
     && pip install kubernetes \
-    && pip install apache-airflow[crypto,password,celery,s3,postgres,hive,jdbc,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
+    && pip install apache-airflow[crypto,password,celery,aws,postgres,hive,jdbc,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get autoremove -yqq --purge \
@@ -69,12 +70,9 @@ RUN set -ex \
         /usr/share/doc-base
 
 COPY script/entrypoint.sh /entrypoint.sh
-RUN chown -R airflow:airflow ${AIRFLOW_HOME} \
-&& chmod 777 /entrypoint.sh
+COPY script/create_connection.py /create_connection.py
+RUN chown -R airflow:airflow ${AIRFLOW_HOME}
 
 EXPOSE 8080 5555 8793
 USER airflow
 WORKDIR ${AIRFLOW_USER_HOME}
-
-#Container needs to be started with full bash command for entrypoint
-# e.g sh /entrypoint.sh webserver|scheduler|worker

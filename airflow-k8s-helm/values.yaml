@@ -4,15 +4,14 @@
 images:
   core:
     # The core airflow image for the webserver and scheduler components
-    # If you want to customise or build your own image
     repository: reevedata/airflow-kubernetes
-    pullPolicy: IfNotPresent
-    tag: v1.0.1
+    pullPolicy: Always
+    tag: 1.10.10
   # The docker repository location for your worker container.
   worker:
     repository: reevedata/airflow-kubernetes
-    pullPolicy: IfNotPresent
-    tag: v1.0.1
+    pullPolicy: Always
+    tag: 1.10.10
 
 airflow:
   example_dags:
@@ -22,72 +21,58 @@ airflow:
     enable: false
     # The name of a connection set up on your
     # Container for logging
-    conn_name: "logging"
+    conn_name: logging
+    # e.g s3
+    conn_type: ""
+    remote_logs_path: "cloud-data-k8s-staging-logs/airflow/logs"
+    # A seperate secret is required that will be used to access
+    # your logging bucket/screen/etc. This will contain a secret called "REMOTE_LOGGING_SECRET"
+    # For example with AWS this would be ACCESS_KEY_ID:ACCESS_KEY_SECRET_ID.
+    # This is then combined with the conn_type and the remote_logs path to create the uri that
+    # airflow will use to build the connection.
+    create_logging_secret: true
+    remote_logs_secrets_filename: "logging-secrets"
     # Remote Path for your logging e.g s3://mylogs/airflow/logs)
-    logs_folder: ""
     # If you are not providing your own secrets file with REMOTE_LOGGING_STRING included
     # then you can give the connection String that will be used for your logging connection.
     # This will be made into a secret.
-    logging_connection_string: ""
+    remote_logging_secret:
 
-  # NOT FUNCTIONAL YET
-  rbac:
-    enable: false
   webserver:
     enable: true
     replicas: 1
     ingress:
       enable: true
-      host: airflow.example.com
+      host: airflow.example.mydomain.com
       annotations:
-        alb.ingress.kubernetes.io/target-type: instance
-        kubernetes.io/ingress.class: alb
-
     resources:
       requests:
         cpu: "0.1"
-        memory: "100Mi"
+        memory: "500Mi"
   scheduler:
     requests:
-     cpu: "0.5"
-     memory: "500Mi"
+      cpu: "0.5"
+      memory: "500Mi"
 
   secrets:
-  # Provide your own secret manifest here. This secret file should contain
-  # DB_PASSWORD and DB_HOST (and if using remote logging then REMOTE_LOGGING_STRING)
-  # All Base 64 encoded.
-  #  apiVersion: v1
-  #  kind: Secret
-  #  metadata:
-  #    name: my-secrets
-  #    namespace: my-namespace
-  #  type: Opaque
-  #  data:
-  #    DB_PASSWORD: XXXX
-  #    DB_HOST: XXXX
-  #    REMOTE_LOGGING_STRING: XXXX (If remote logging enabled)
-  #
-  # If set to true then a secret file will be created using the credentials provided
-  # under airflow.db and airflow.secrets.extra secrets. Creating a secret file
-  # Like This is not ideal for production use.
     create_secrets_file: true
-
-  # The name of a secret object in the same namespace. This will contain
-  # DB_PASSWORD, DB_HOST, REMOTE_LOGGING_STRING
-  #    secret_file: my-secrets
-#    secret_file:
+    secret_file: "secrets-default"
+    # The name of a secret object in the same namespace. This will contain
+    # DB_PASSWORD, DB_HOST, REMOTE_LOGGING_STRING
+    #    secret_file: my-secrets
+    #    secret_file:
 
     # Any Further Secrets that need to be available in the environment can be added here.
-  # IF PROVIDING FILE:
-  # Secret only needs to a list form e.g
-  #    extra_secrets:
-  #      - Secret1
-  #      - Secret2
-  # IF SECRETS TO BE CREATED BY THIS HELM CHART (not recommended for production):
-  # Secrets to be provided as a map e.g
-  #      extra_secrets:
-  #        Secret1: "admin"
-  #        Secret2: "otherpass"
+    # IF PROVIDING FILE:
+    # Secret only needs to a list form e.g
+    #    extra_secrets:
+    #      - Secret1
+    #      - Secret2
+    # IF SECRETS TO BE CREATED BY THIS HELM CHART (not recommended for production):
+    # Secrets to be provided as a map e.g
+    #      extra_secrets:
+    #        Secret1: "admin"
+    #        Secret2: "otherpass"
     extra_secrets: []
 
   worker:
@@ -96,9 +81,8 @@ airflow:
     # Additional Environment variables that will be created on workers when they
     # Initialise
     worker_env_variables: []
-
   #Extra Variables that will be created in your webserver and scheduler containers.
-  extra_variables:
+  extra_variables: []
 
   db:
     # If Set to True creates a postgres database to act as
@@ -107,7 +91,7 @@ airflow:
     protocol: postgresql+psycopg2
     username: admin
     host: airflow-default-db-svc
-    password: admin
+    password: testadminpass
     dbname: airflow
     port: 5432
 
