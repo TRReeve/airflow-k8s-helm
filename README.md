@@ -44,7 +44,7 @@ Current chart version is `1.0.1`
 | airflow.worker.worker_env_variables | list | `[]` |  |
 | images.core.pullPolicy | string | `"Always"` |  |
 | images.core.repository | string | `"reevedata/airflow-kubernetes"` |  |
-| images.core.tag | string | `"1.10.10.1"` |  |
+| images.core.tag | string | `"1.10.10"` |  |
 | images.worker.pullPolicy | string | `"Always"` |  |
 | images.worker.repository | string | `"reevedata/airflow-kubernetes"` |  |
-| images.worker.tag | string | `"1.10.10.1"` |  |
+| images.worker.tag | string | `"1.10.10"` |  |
