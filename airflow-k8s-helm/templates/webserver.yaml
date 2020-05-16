@@ -57,7 +57,7 @@ spec:
             - configMapRef:
                 name: "logging-config"
             - secretRef:
-                name: {{required "A remote logging secrets filename is required at .Values.airflow.remote_logging.remote_logs_secrets_filename" .Values.airflow.remote_logging.remote_logs_secrets_filename}}
+                name: {{required "A remote logging secrets filename is required at .Values.airflow.remote_logging.remote_logs_secrets_filename" .Values.airflow.remote_logging.logging_secret}}
             {{- end }}
           env:
             - name: DB_PASSWORD
@@ -72,7 +72,7 @@ spec:
                   key: DB_HOST
             {{- if .Values.airflow.remote_logging.enable}}
             - name: AIRFLOW_CONN_{{ required "A logging connection name is required" .Values.airflow.remote_logging.conn_name | upper}}
-              value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
+              value: "{{ required "A valid remote logging connection type is required if remote logging is enabled at .Values.airflow.remote_logging.conn_type" .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
             - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ required "A logging connection name is required" .Values.airflow.remote_logging.conn_name | upper}}
               value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
             {{- end }}

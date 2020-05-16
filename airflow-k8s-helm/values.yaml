@@ -3,47 +3,56 @@
 # Declare variables to be passed into your templates.
 images:
   core:
-    # The core airflow image for the webserver and scheduler components
+    # images.core.repository The image for the webserver and scheduler components
     repository: reevedata/airflow-kubernetes
     pullPolicy: Always
     tag: 1.10.10
-  # The docker repository location for your worker container.
+
   worker:
+    # images.core.repository The image for the worker components
     repository: reevedata/airflow-kubernetes
     pullPolicy: Always
     tag: 1.10.10
 
 airflow:
   example_dags:
+    # airflow.example_dags.enable -- Create example dags
     enable: true
   # Normally will be preferable to set this up for any production process
   remote_logging:
+    # airflow.remote_logging.enable -- enable remote logging to an s3/gcs..etc. Recommended as workers are ephemeral.
     enable: false
-    # The name of a connection set up on your
-    # Container for logging
+    # airflow.remote_logging.conn_name -- Name you want to give the connection used for remote logging.
     conn_name: logging
-    # e.g s3
-    conn_type: ""
+    # airflow.remote_logging.conn_type -- The type of connection you want to set up for remote logging. This chart has been tested
+    # with s3 (AWS) and gs (GCP)
+    conn_type:
+    # airflow.remote_logging.remote_logs_path -- the path logs will be written to in your remote storage bucket.
     remote_logs_path: "cloud-data-k8s-staging-logs/airflow/logs"
-    # A seperate secret is required that will be used to access
-    # your logging bucket/screen/etc. This will contain a secret called "REMOTE_LOGGING_SECRET"
-    # For example with AWS this would be ACCESS_KEY_ID:ACCESS_KEY_SECRET_ID.
+    # airflow.remote_logging.create_logging_secret -- Create a logging secret file
+    # using the secret defined under remote_logging_secret This needs to contain the login:password or similar for
+    #whatever makes up the username and password element of your connection URI
+    # For example with S3 this would be ACCESS_KEY_ID:ACCESS_KEY_SECRET_ID.
     # This is then combined with the conn_type and the remote_logs path to create the uri that
-    # airflow will use to build the connection.
+    # airflow will use to build the connection. e.g {conn_type}://{remote_logging_secret}/remote_logs_path
     create_logging_secret: true
-    remote_logs_secrets_filename: "logging-secrets"
-    # Remote Path for your logging e.g s3://mylogs/airflow/logs)
-    # If you are not providing your own secrets file with REMOTE_LOGGING_STRING included
-    # then you can give the connection String that will be used for your logging connection.
-    # This will be made into a secret.
-    remote_logging_secret:
+    # airflow.remote_logging.remote_logs_secrets_filename -- The name of the secrets file providing a
+    # REMOTE_LOGGING_SECRET that will be used to construct an airflow URI for the connection
+    logging_secret: "logging-secrets"
+    # airflow.remote_logging.remote_logging_credential -- If create_logging_secret is true, the secret you want to use for remote logging.
+    logging_credential:
 
   webserver:
+    # airflow.webserver.enable -- Whether to create webserver UI
     enable: true
+    # airflow.webserver.repliaces -- Webserver replices
     replicas: 1
     ingress:
+      # airflow.webserver.ingress.enable -- Whether to create an ingress for your webserver.
       enable: true
+      # airflow.webserver.ingress.host -- Host for your ingress controller.
       host: airflow.example.mydomain.com
+      # airflow.webserver.ingress.annotations -- Ingress annotations for your ingress controller.
       annotations:
     resources:
       requests:
@@ -55,9 +64,14 @@ airflow:
       memory: "500Mi"
 
   secrets:
+    # airflow.secrets.create_secrets_file -- create a secrets file using the credentials provided in the db section and extra secrets sections.
+    # or set to false and provide a secrets file providing DB_HOST and DB_PASSWORD for your airflow backend and any other secrets you wish to provide
+    # to your environment.
     create_secrets_file: true
+    # airflow.secrets.secret_file -- a secrets file providing DB_HOST and DB_PASSWORD
+    # for your airflow backend and any other secrets you wish to provide  to your environment.
     secret_file: "secrets-default"
-    # The name of a secret object in the same namespace. This will contain
+    # airflow.secrets.extra_secrets -- The name of a secret object in the same namespace. This will contain
     # DB_PASSWORD, DB_HOST, REMOTE_LOGGING_STRING
     #    secret_file: my-secrets
     #    secret_file:
@@ -76,17 +90,16 @@ airflow:
     extra_secrets: []
 
   worker:
-    # Maximum amount of pods that can be created per scheduler heartbeat.
+    # airflow.worker.pods_per_heartbeat -- number of pods to create per scheduler heartbeat
     pods_per_heartbeat: 5
-    # Additional Environment variables that will be created on workers when they
-    # Initialise
+    # airflow.worker.worker_env_variables -- Additional Environment variables that will be created on workers when they initialise
     worker_env_variables: []
-  #Extra Variables that will be created in your webserver and scheduler containers.
+  # airflow.extra_variables -- Extra Variables to create in your webserver and scheduler containers.
   extra_variables: []
 
   db:
-    # If Set to True creates a postgres database to act as
-    # a backend for your airflow cluster.
+    # airflow.db.create_db -- Create a postgres backend for your airflow cluster. More suitable for
+    # testing than for production.
     create_db: true
     protocol: postgresql+psycopg2
     username: admin

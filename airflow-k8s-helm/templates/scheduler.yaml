@@ -38,17 +38,17 @@ spec:
             - configMapRef:
                 name: "logging-config"
             - secretRef:
-                name: "logging-secrets"
+                name: {{ required "Logging Secret required" .Values.airflow.remote_logging.logging_secret}}
           env:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  name: {{required "a secrets file is required" .Values.airflow.secrets.secret_file}}
                   key: DB_PASSWORD
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  name: {{ .Values.airflow.secrets.secret_file}}
                   key: DB_HOST
             {{- if .Values.airflow.remote_logging.enable}}
             - name: AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
@@ -60,7 +60,7 @@ spec:
             - name: {{ $secret_name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.Values.airflow.secrets.secret_file | default "airflow-secrets-default"}}
+                  name: {{ $.Values.airflow.secrets.secret_file}}
                   key: {{ $secret_name }}
           {{-  end }}
           resources:

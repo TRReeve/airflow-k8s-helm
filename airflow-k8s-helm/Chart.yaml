@@ -1,6 +1,8 @@
 apiVersion: v2
 name: airflow-k8s-helm
-description: A Helm chart to run an airflow cluster on Kubernetes
+description: An airflow cluster fully distributed using the Kubernetes operator
+
+
 
 # A chart can be either an 'application' or a 'library' chart.
 #
