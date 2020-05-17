@@ -1,0 +1,33 @@
+Airflow Kubernetes Chart installed to {{.Release.Namespace}}/{{ .Release.Name }}
+Version: {{ .Chart.Version }}
+
+*** Image ***
+  Core: {{ .Values.images.core.repository}}:{{.Values.images.core.tag}}
+  Worker: {{ .Values.images.worker.repository}}:{{.Values.images.worker.tag}}
+*** Ingress ***
+{{ if .Release.IsInstall}}
+Installing ingress, this may take a while to be available...
+{{end}}
+  Ingress Enabled: {{ .Values.airflow.webserver.ingress.enable }}
+  {{- if .Values.airflow.webserver.ingress.enable}}
+  Host: {{ .Values.airflow.webserver.ingress.host }}
+  Annotations: {{ .Values.airflow.webserver.ingress.annotations | toJson}}
+{{- end}}
+*** Webserver ***
+  Enabled : {{ .Values.airflow.webserver.enable }}
+  Replices: {{ .Values.airflow.webserver.replicas}}
+  Resources {{ .Values.airflow.webserver.resources | toJson}}
+{{- if .Values.airflow.remote_logging.enable}}
+*** Remote Logging ***
+  Remote Logging Path: {{ printf "%s://%s" .Values.airflow.remote_logging.conn_type .Values.airflow.remote_logging.remote_logs_path }}
+  Remote logging Connection Name: {{ .Values.airflow.remote_logging.conn_name }}
+{{- end}}
+*** Scheduler ***
+  Resources {{ .Values.airflow.scheduler.requests | toJson }}
+*** Database ***
+  Create Database: {{ .Values.airflow.db.create_db }}
+  Database Name: {{ .Values.airflow.db.dbname }}
+Additional Variables:
+{{- range $key, $value := .Values.airflow.extra_variables }}
+{{ $key }}: {{ $value | quote}}
+{{- end}}
