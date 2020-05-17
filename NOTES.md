@@ -10,6 +10,8 @@ we don't have to spend time managing queues and other celery related
 concepts.
 
 
+
+
 ######How to Deploy
 
 The kubernetes deployment
@@ -23,6 +25,22 @@ that just has airflow installed.
 
 - Use the [Kubernetes Pod Operator](https://airflow.apache.org/docs/stable/kubernetes.html) to run jobs contained in docker containers
 this lets you pretty much run anything you want as a process.
+
+
+###### Why not shared file system?
+- Another way of deploying airflow containers is creating a shared
+file system to share between all the system components e.g Amazon EFS. The reason why this wasn't done was 
+
+- Having done both the shared file system and rebuild containers option I've found it's a lot easier to manage and know what's actually deployed and test
+using a fully immutable build.
+
+- It's a lot easier/possible to roll back with immutable builds
+
+- The implementations across different clouds make things tricky and would bring in dependencies 
+on different provisioners for readwritemany volumes. 
+
+
+
 
 ######Roll your own container
 You can bake your own container completely seperate to the reevedata/airflow-kubernetes containers. They just have to contain
