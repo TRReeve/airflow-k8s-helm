@@ -31,4 +31,3 @@ Additional Variables:
 {{- range $key, $value := .Values.airflow.extra_variables }}
 {{ $key }}: {{ $value | quote}}
 {{- end}}
-
