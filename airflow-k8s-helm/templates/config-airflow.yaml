@@ -14,6 +14,9 @@ data:
   AIRFLOW__KUBERNETES__DAGS_IN_IMAGE: "True"
   AIRFLOW__KUBERNETES__IN_CLUSTER: "True"
   AIRFLOW__KUBERNETES__KUBE_CLIENT_REQUEST_ARGS: '{"_request_timeout" : [60,60] }'
+  {{ if .Values.airflow.webserver.ingress.enable}}
+  INGRESS_HOST: {{ .Values.airflow.webserver.ingress.host }}
+  {{- end }}
   {{/*  IF EXAMPLE DAGS ENABLED */}}
   {{- if .Values.airflow.example_dags.enable}}
   AIRFLOW__CORE__LOAD_EXAMPLES: "True"
