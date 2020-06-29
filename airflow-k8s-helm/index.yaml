@@ -3,12 +3,12 @@ entries:
   airflow-k8s-helm:
   - apiVersion: v2
     appVersion: 1.10.10
-    created: "2020-06-29T13:11:15.357196+01:00"
+    created: "2020-06-29T13:19:52.684373+01:00"
     description: An airflow cluster fully distributed using the Kubernetes operator
-    digest: 391fbfc764707735292e132d08f83b40d756755ef9018d238644c81a13bac300
+    digest: 382b6ff8f972cca68c432ee2d942a7f59b4ea2adb8e9d5290cc3488186eae7b0
     name: airflow-k8s-helm
     type: application
     urls:
     - airflow-k8s-helm-1.0.3.tgz
     version: 1.0.3
-generated: "2020-06-29T13:11:15.315358+01:00"
+generated: "2020-06-29T13:19:52.669527+01:00"
