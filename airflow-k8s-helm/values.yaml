@@ -1,57 +1,52 @@
 # Default values for airflow-kubernetes.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-images:
-  core:
-    # images.core.repository The image for the webserver and scheduler components
-    repository: reevedata/airflow-kubernetes
-    pullPolicy: Always
-    tag: 1.10.10
 
-  worker:
-    # images.core.repository The image for the worker components
-    repository: reevedata/airflow-kubernetes
-    pullPolicy: Always
-    tag: 1.10.10
 
 airflow:
-  example_dags:
-    # airflow.example_dags.enable -- Create example dags
+  image:
+    # airflow.image.repository -- Airflow Image
+    repository: reevedata/airflow-kubernetes
+    # airflow.image.pullPolicy
+    pullPolicy: Always
+    # airflow.image.tag
+    tag: 1.10.10
+  exampleDags:
+    # airflow.exampleDags.enable -- Create example dags
     enable: true
   # Normally will be preferable to set this up for any production process
-  remote_logging:
-    # airflow.remote_logging.enable -- enable remote logging to an s3/gcs..etc. Recommended as workers are ephemeral.
+  remoteLogging:
+    # airflow.remoteLogging.enable -- enable remote logging to an s3/gcs..etc. Recommended as workers are ephemeral.
     enable: false
-    # airflow.remote_logging.conn_name -- Name you want to give the connection used for remote logging.
-    conn_name: logging
-    # airflow.remote_logging.conn_type -- The type of connection you want to set up for remote logging. This chart has been tested
+    # airflow.remoteLogging.connName -- Name you want to give the connection used for remote logging.
+    connName: logging
+    # airflow.remoteLogging.connType -- The type of connection you want to set up for remote logging. This chart has been tested
     # with s3 (AWS) and gs (GCP)
-    conn_type:
-    # airflow.remote_logging.remote_logs_path -- the path logs will be written to in your remote storage bucket.
-    remote_logs_path: "cloud-data-k8s-staging-logs/airflow/logs"
-    # airflow.remote_logging.create_logging_secret -- Create a logging secret file
+    connType:
+    # airflow.remoteLogging.remoteLoggingPath -- the path logs will be written to in your remote storage bucket.
+    path:
+    # airflow.remoteLogging.createSecret -- Create a logging secret file
     # using the secret defined under remote_logging_secret This needs to contain the login:password or similar for
     #whatever makes up the username and password element of your connection URI
     # For example with S3 this would be ACCESS_KEY_ID:ACCESS_KEY_SECRET_ID.
     # This is then combined with the conn_type and the remote_logs path to create the uri that
     # airflow will use to build the connection. e.g {conn_type}://{remote_logging_secret}/remote_logs_path
-    create_logging_secret: true
-    # airflow.remote_logging.remote_logs_secrets_filename -- The name of the secrets file providing a
+    createSecret: true
+    # airflow.remoteLogging.secretName -- The name of the secrets file providing a
     # REMOTE_LOGGING_SECRET that will be used to construct an airflow URI for the connection
-    logging_secret: "logging-secrets"
-    # airflow.remote_logging.remote_logging_credential -- If create_logging_secret is true, the secret you want to use for remote logging.
-    logging_credential:
-
+    secretName: "logging-secrets"
+    # airflow.remoteLogging.credential -- If create_logging_secret is true, the secret you want to use for remote logging.
+    credential:
   webserver:
     # airflow.webserver.enable -- Whether to create webserver UI
     enable: true
-    # airflow.webserver.repliaces -- Webserver replices
+    # airflow.webserver.repliacs -- Webserver replices
     replicas: 1
     ingress:
       # airflow.webserver.ingress.enable -- Whether to create an ingress for your webserver.
       enable: true
       # airflow.webserver.ingress.host -- Host for your ingress controller.
-      host: airflow.example.mydomain.com
+      host: airflow.helmdeploy.data.global.com
       # airflow.webserver.ingress.annotations -- Ingress annotations for your ingress controller.
       annotations:
     resources:
@@ -62,20 +57,18 @@ airflow:
     requests:
       cpu: "0.5"
       memory: "500Mi"
-
   secrets:
-    # airflow.secrets.create_secrets_file -- create a secrets file using the credentials provided in the db section and extra secrets sections.
+    # airflow.secrets.createFile -- create a secrets file using the credentials provided in the db section and extra secrets sections.
     # or set to false and provide a secrets file providing DB_HOST and DB_PASSWORD for your airflow backend and any other secrets you wish to provide
     # to your environment.
-    create_secrets_file: true
-    # airflow.secrets.secret_file -- a secrets file providing DB_HOST and DB_PASSWORD
+    createFile: true
+    # airflow.secrets.secretName -- a secrets file providing DB_HOST and DB_PASSWORD
     # for your airflow backend and any other secrets you wish to provide  to your environment.
-    secret_file: "secrets-default"
-    # airflow.secrets.extra_secrets -- The name of a secret object in the same namespace. This will contain
+    secretName: "secrets-default"
+    # airflow.secrets.extraSecrets -- The name of a secret object in the same namespace. This will contain
     # DB_PASSWORD, DB_HOST, REMOTE_LOGGING_STRING
     #    secret_file: my-secrets
     #    secret_file:
-
     # Any Further Secrets that need to be available in the environment can be added here.
     # IF PROVIDING FILE:
     # Secret only needs to a list form e.g
@@ -87,20 +80,18 @@ airflow:
     #      extra_secrets:
     #        Secret1: "admin"
     #        Secret2: "otherpass"
-    extra_secrets: []
-
+    extraSecrets: []
   worker:
     # airflow.worker.pods_per_heartbeat -- number of pods to create per scheduler heartbeat
-    pods_per_heartbeat: 5
-    # airflow.worker.worker_env_variables -- Additional Environment variables that will be created on workers when they initialise
-    worker_env_variables: []
-  # airflow.extra_variables -- Extra Variables to create in your webserver and scheduler containers.
-  extra_variables: []
-
+    podsPerHeartbeat: 5
+    # airflow.worker.envVars -- Additional Environment variables that will be created on workers when they initialise
+    envVars: []
+  # airflow.envVars -- Extra Variables to create in your webserver and scheduler containers.
+  envVars: []
   db:
-    # airflow.db.create_db -- Create a postgres backend for your airflow cluster. More suitable for
+    # airflow.db.create -- Create a postgres backend for your airflow cluster. More suitable for
     # testing than for production.
-    create_db: true
+    create: true
     protocol: postgresql+psycopg2
     username: admin
     host: airflow-default-db-svc

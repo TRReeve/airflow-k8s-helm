@@ -1,4 +1,4 @@
-{{ if .Values.airflow.db.create_db }}
+{{ if .Values.airflow.db.create }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -38,7 +38,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: DB_PASSWORD
-                  name: {{ .Values.airflow.secrets.secret_file| default "airflow-secrets-default"}}
+                  name: {{ .Values.airflow.secrets.secretName | default "airflow-secrets-default"}}
             - name: POSTGRES_USER
               value: {{ .Values.airflow.db.username}}
             - name: POSTGRES_DB

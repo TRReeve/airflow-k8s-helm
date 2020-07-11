@@ -5,10 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace}}
 data:
   AIRFLOW__CORE__EXECUTOR: KubernetesExecutor
-  AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: {{ .Values.images.worker.repository}}
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: {{ .Values.airflow.image.repository | quote}}
   AIRFLOW__WEBSERVER__LOG_FETCH_TIMEOUT_SEC: {{ 10 | quote}}
-  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: {{ .Values.images.worker.tag}}
-  AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH: {{ .Values.airflow.worker.pods_per_heartbeat | quote}}
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: {{ .Values.airflow.image.tag}}
+  AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH: {{ .Values.airflow.worker.podsPerHeartbeat | quote}}
   AIRFLOW__KUBERNETES__NAMESPACE: {{ .Release.Namespace }}
   AIRFLOW__CORE__SQL_ALCHEMY_CONN: "{{.Values.airflow.db.protocol}}://{{ .Values.airflow.db.username }}:$DB_PASSWORD@$DB_HOST:{{ .Values.airflow.db.port }}/{{.Values.airflow.db.dbname}}"
   AIRFLOW__KUBERNETES__DAGS_IN_IMAGE: "True"
@@ -18,12 +18,12 @@ data:
   INGRESS_HOST: {{ .Values.airflow.webserver.ingress.host }}
   {{- end }}
   {{/*  IF EXAMPLE DAGS ENABLED */}}
-  {{- if .Values.airflow.example_dags.enable}}
+  {{- if .Values.airflow.exampleDags.enable}}
   AIRFLOW__CORE__LOAD_EXAMPLES: "True"
   {{ else }}
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   {{- end }}
 {{/*CUSTOM VARIABLES*/}}
-{{- range $key, $value := .Values.airflow.extra_variables }}
+{{- range $key, $value := .Values.airflow.envVars }}
   {{ $key }}: {{ $value | quote}}
 {{- end}}

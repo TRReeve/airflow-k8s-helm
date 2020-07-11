@@ -25,7 +25,7 @@ spec:
       serviceAccountName: "airflow"
       containers:
         - name: scheduler
-          image: {{ .Values.images.core.repository}}:{{ .Values.images.core.tag}}
+          image: "{{ required "airflow image is required" .Values.airflow.image.repository }}:{{ required "airflow image is required" .Values.airflow.image.tag }}"
           command:
             - sh
             - /entrypoint.sh
@@ -38,29 +38,35 @@ spec:
             - configMapRef:
                 name: "logging-config"
             - secretRef:
-                name: {{ required "Logging Secret required" .Values.airflow.remote_logging.logging_secret}}
+                name: {{ required "Logging Secret required" .Values.airflow.remoteLogging.secretName}}
           env:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{required "a secrets file is required" .Values.airflow.secrets.secret_file}}
+                  name: {{required "a secrets file is required" .Values.airflow.secrets.secretName}}
                   key: DB_PASSWORD
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.airflow.secrets.secret_file}}
+                  name: {{ .Values.airflow.secrets.secretName}}
                   key: DB_HOST
-            {{- if .Values.airflow.remote_logging.enable}}
-            - name: AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
-              value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
-            - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remote_logging.conn_name | upper}}
-              value: "{{ .Values.airflow.remote_logging.conn_type | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remote_logging.remote_logs_path}}"
+            {{- if .Values.airflow.remoteLogging.enable }}
+            - name: "AIRFLOW_CONN_{{ .Values.airflow.remoteLogging.connName | upper}}"
+              value: "{{ .Values.airflow.remoteLogging.connType | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remoteLogging.path }}"
+            - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW_CONN_{{ .Values.airflow.remoteLogging.connName | upper}}
+              value: "{{ .Values.airflow.remoteLogging.connType | lower}}://$(REMOTE_LOGGING_SECRET)@{{ .Values.airflow.remoteLogging.path}}"
             {{- end }}
-          {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extra_secrets}}
+            {{- if .Values.airflow.envVars -}}
+            {{- range $key, $value := .Values.airflow.envVars }}
+            - name: {{ $key }}
+              value: {{ quote $value }}
+            {{- end }}
+            {{- end }}
+            {{-  range $secret_name, $secret_value := .Values.airflow.secrets.extraSecrets}}
             - name: {{ $secret_name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.Values.airflow.secrets.secret_file}}
+                  name: {{ $.Values.airflow.secrets.secretName}}
                   key: {{ $secret_name }}
           {{-  end }}
           resources:

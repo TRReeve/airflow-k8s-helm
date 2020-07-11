@@ -3,15 +3,15 @@ kind: ConfigMap
 metadata:
   name: logging-config
 data:
-{{- if .Values.airflow.remote_logging.enable }}
+{{- if .Values.airflow.remoteLogging.enable }}
   AIRFLOW__CORE__REMOTE_LOGGING: "True"
-  REMOTE_LOGGING_PATH: {{ .Values.airflow.remote_logging.remote_logs_path | default " " | quote}}
-  REMOTE_LOGGING_TYPE: {{.Values.airflow.remote_logging.conn_type | lower }}
-  AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "{{required "A valid connection type is required at .Values.airflow.remote_logging.conn_type"  .Values.airflow.remote_logging.conn_type | default "" | lower}}://{{.Values.airflow.remote_logging.remote_logs_path}}"
-  AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remote_logging.conn_name | default "" | quote}}
+  REMOTE_LOGGING_PATH: {{ .Values.airflow.remoteLogging.path | default " " | quote}}
+  REMOTE_LOGGING_TYPE: {{.Values.airflow.remoteLogging.connType | lower }}
+  AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "{{required "A valid connection type is required at .Values.airflow.remote_logging.conn_type"  .Values.airflow.remoteLogging.connType | default "" | lower}}://{{.Values.airflow.remoteLogging.path}}"
+  AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remoteLogging.connName | default "" | quote}}
   AIRFLOW__CORE__ENCRYPT_S3_LOGS: "False"
   AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_LOGGING: "True"
-  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "{{ .Values.airflow.remote_logging.conn_type | default "" | lower}}://{{.Values.airflow.remote_logging.remote_logs_path}}"
-  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remote_logging.conn_name | default "" | quote}}
+  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "{{ .Values.airflow.remoteLogging.connType | default "" | lower}}://{{.Values.airflow.remoteLogging.path}}"
+  AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__REMOTE_LOG_CONN_ID: {{ .Values.airflow.remoteLogging.connName | default "" | quote}}
   AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__CORE__ENCRYPT_S3_LOGS: "False"
 {{- end }}
