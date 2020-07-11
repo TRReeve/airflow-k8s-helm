@@ -24,7 +24,7 @@ spec:
         # Forces a redeploy on any upgrade.
         force_redeploy: {{ randAscii 10 | quote }}
     spec:
-      serviceAccountName: "airflow"
+      serviceAccountName: "{{ .Release.Name | trim | lower }}serviceaccount"
       containers:
         - name: webserver
           readinessProbe:

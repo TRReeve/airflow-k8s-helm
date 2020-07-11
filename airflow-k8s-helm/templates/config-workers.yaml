@@ -6,7 +6,7 @@ metadata:
 data:
   AIRFLOW__KUBERNETES__ENV_FROM_CONFIGMAP_REF: "airflow-config,logging-config"
   AIRFLOW__KUBERNETES__ENV_FROM_SECRET_REF: "{{$.Values.airflow.secrets.secretName | default "airflow-secrets-default" }}"
-  AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: "airflow"
+  AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: "{{ .Release.Name | trim | lower }}serviceaccount"
   {{- range $var_name, $var_value := .Values.airflow.worker.envVars }}
   "AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__{{ $var_name | upper }}": {{ $var_value | quote}}
   {{- end}}
