@@ -4,15 +4,13 @@
 
 
 airflow:
-# REQUIRED TO SET IMAGE
-#  image:
-#    # airflow.image.repository -- Airflow Image
-#    repository: reevedata/airflow-kubernetes
-#    # airflow.image.pullPolicy
-#    pullPolicy: Always
-#    # airflow.image.tag
-#    tag: 1.10.10
-
+  image:
+    # airflow.image.repository -- Airflow Image
+    repository: reevedata/airflow-kubernetes
+    # airflow.image.pullPolicy
+    pullPolicy: Always
+    # airflow.image.tag
+    tag: 1.10.10
   exampleDags:
     # airflow.exampleDags.enable -- Create example dags
     enable: true
@@ -51,6 +49,8 @@ airflow:
       host: airflow.helmdeploy.data.global.com
       # airflow.webserver.ingress.annotations -- Ingress annotations for your ingress controller.
       annotations:
+        alb.ingress.kubernetes.io/target-type: instance
+        kubernetes.io/ingress.class: alb
     resources:
       requests:
         cpu: "0.1"
@@ -87,7 +87,8 @@ airflow:
     # airflow.worker.pods_per_heartbeat -- number of pods to create per scheduler heartbeat
     podsPerHeartbeat: 5
     # airflow.worker.envVars -- Additional Environment variables that will be created on workers when they initialise
-    envVars: {}
+    envVars:
+      WORKERENV: {}
   # airflow.envVars -- Extra Variables to create in your webserver and scheduler containers.
   envVars: {}
   db:
