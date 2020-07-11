@@ -85,9 +85,9 @@ airflow:
     # airflow.worker.pods_per_heartbeat -- number of pods to create per scheduler heartbeat
     podsPerHeartbeat: 5
     # airflow.worker.envVars -- Additional Environment variables that will be created on workers when they initialise
-    envVars: []
+    envVars: {}
   # airflow.envVars -- Extra Variables to create in your webserver and scheduler containers.
-  envVars: []
+  envVars: {}
   db:
     # airflow.db.create -- Create a postgres backend for your airflow cluster. More suitable for
     # testing than for production.

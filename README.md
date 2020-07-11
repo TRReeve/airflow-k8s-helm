@@ -19,7 +19,7 @@ Current chart version is `1.0.4`
 | airflow.db.port | int | `5432` |  |
 | airflow.db.protocol | string | `"postgresql+psycopg2"` |  |
 | airflow.db.username | string | `"admin"` |  |
-| airflow.envVars | list | `[]` | Extra Variables to create in your webserver and scheduler containers. |
+| airflow.envVars | object | `{}` | Extra Variables to create in your webserver and scheduler containers. |
 | airflow.exampleDags.enable | bool | `true` | Create example dags |
 | airflow.image.pullPolicy | string | `"Always"` |  |
 | airflow.image.repository | string | `"reevedata/airflow-kubernetes"` | Airflow Image |
@@ -43,5 +43,5 @@ Current chart version is `1.0.4`
 | airflow.webserver.replicas | int | `1` |  |
 | airflow.webserver.resources.requests.cpu | string | `"0.1"` |  |
 | airflow.webserver.resources.requests.memory | string | `"500Mi"` |  |
-| airflow.worker.envVars | list | `[]` | Additional Environment variables that will be created on workers when they initialise |
+| airflow.worker.envVars | object | `{}` | Additional Environment variables that will be created on workers when they initialise |
 | airflow.worker.podsPerHeartbeat | int | `5` |  |
