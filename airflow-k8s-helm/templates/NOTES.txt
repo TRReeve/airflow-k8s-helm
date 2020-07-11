@@ -2,7 +2,8 @@ Airflow Kubernetes Chart installed to {{.Release.Namespace}}/{{ .Release.Name }}
 Version: {{ .Chart.Version }}
 
 *** Image ***
-{{ .Values.airflow.image.repository}}:{{.Values.airflow.image.tag}}
+Image: {{ .Values.airflow.image.repository}}:{{.Values.airflow.image.tag}}
+Pull Policy: {{ .Values.airflow.image.pullPolicy }}
 *** Ingress ***
 {{ if .Release.IsInstall}}
 Installing ingress, this may take a while to be available...

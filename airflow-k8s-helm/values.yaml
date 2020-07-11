@@ -5,13 +5,14 @@
 
 airflow:
 # REQUIRED TO SET IMAGE
-#  image:
+  image:
 #    # airflow.image.repository -- Airflow Image
 #    repository: reevedata/airflow-kubernetes
 #    # airflow.image.pullPolicy
 #    pullPolicy: Always
 #    # airflow.image.tag
 #    tag: 1.10.10
+    pullPolicy: Always
 
   exampleDags:
     # airflow.exampleDags.enable -- Create example dags
