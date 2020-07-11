@@ -40,7 +40,7 @@ spec:
             httpGet:
               path: /health
               port: 8080
-          image: "{{ required "airflow image is required" .Values.airflow.image.repository }}:{{ required "airflow image is required" .Values.airflow.image.tag }}"
+          image: "{{ required "airflow.image.repository is required" .Values.airflow.image.repository }}:{{ required "airflow.image.tag is required" .Values.airflow.image.tag }}"
           ports:
             - containerPort: 8080
               name: webserveruiport

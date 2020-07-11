@@ -25,7 +25,7 @@ spec:
       serviceAccountName: "airflow"
       containers:
         - name: scheduler
-          image: "{{ required "airflow image is required" .Values.airflow.image.repository }}:{{ required "airflow image is required" .Values.airflow.image.tag | toString }}"
+          image: "{{ required "airflow.image.repository is required" .Values.airflow.image.repository }}:{{ required "airflow.image.tag is required" .Values.airflow.image.tag | toString }}"
           command:
             - sh
             - /entrypoint.sh
