@@ -5,12 +5,14 @@
 
 airflow:
   image:
+    # repository: reevedata/airflow-kubernetes
     # airflow.image.repository -- Airflow Image
-    repository: reevedata/airflow-kubernetes
+    repository:
     # airflow.image.pullPolicy
     pullPolicy: Always
+    # tag: 1.10.10
     # airflow.image.tag
-    tag: 1.10.10
+    tag:
   exampleDags:
     # airflow.exampleDags.enable -- Create example dags
     enable: true

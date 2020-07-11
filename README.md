@@ -22,8 +22,8 @@ Current chart version is `1.0.4`
 | airflow.envVars | object | `{}` | Extra Variables to create in your webserver and scheduler containers. |
 | airflow.exampleDags.enable | bool | `true` | Create example dags |
 | airflow.image.pullPolicy | string | `"Always"` |  |
-| airflow.image.repository | string | `"reevedata/airflow-kubernetes"` | Airflow Image |
-| airflow.image.tag | string | `"1.10.10"` |  |
+| airflow.image.repository | string | `nil` | Airflow Image |
+| airflow.image.tag | string | `nil` |  |
 | airflow.remoteLogging.connName | string | `"logging"` | Name you want to give the connection used for remote logging. |
 | airflow.remoteLogging.connType | string | `nil` | The type of connection you want to set up for remote logging. This chart has been tested with s3 (AWS) and gs (GCP) |
 | airflow.remoteLogging.createSecret | bool | `true` | Create a logging secret file using the secret defined under remote_logging_secret This needs to contain the login:password or similar for |
