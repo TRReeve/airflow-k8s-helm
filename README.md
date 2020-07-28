@@ -2,7 +2,7 @@ airflow-k8s-helm
 ================
 An airflow cluster fully distributed using the Kubernetes operator
 
-Current chart version is `1.0.4`
+Current chart version is `1.0.5`
 
 
 
